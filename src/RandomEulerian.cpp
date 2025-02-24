@@ -1,0 +1,151 @@
+#include <random>
+
+#include "../DataStructures/include/list/linearList.hpp"
+#include "../DataStructures/include/graph/Graph.hpp"
+#include "../DataStructures/include/graph/GraphBuilder.hpp"
+#include "../DataStructures/utils/UnionFind.hpp"
+#include "../DataStructures/utils/timer.hpp"
+
+#include "../include/RandomEulerian.hpp"
+#include "../include/colorMessages.hpp"
+
+Vertex Random(const int& inferiorLimit, const int& superiorLimit) {
+
+	std::random_device rd;  // Obtain a random seed from hardware
+	std::mt19937 gen(rd()); // Initialize Mersenne Twister PRNG
+	std::uniform_int_distribution<int> dist(0, superiorLimit); // Inclusive Range [a, b]
+
+	return dist(gen);
+}
+
+// TODO: Implementar com o esquema arvore geradora + rejection sampling
+Graph GenerateRandomEulerian(size_t n, float density) {
+
+	float minDensity = (2.0 * n - 2) / (n * n - n);
+
+	if (density < minDensity) {
+		throw std::runtime_error(std::format("Density must be greater than {}", minDensity));
+	}
+
+	if (n % 2 == 0 && density == 1) {
+		throw std::runtime_error(std::format("Density must be less than {} for even values of N", 1));
+	}
+
+	std::cout << "Generating a Random Eulerian Graph" << std::endl;
+
+	Timer timer;
+
+	timer.start();
+
+	Graph G = GraphBuilder()
+		.dataStructure(Graph::FastAdjacencyList)
+	.build();
+
+	LinearList<Vertex> D(n, 0);
+	UnionFind<Vertex> uf;
+
+	for (Vertex v = 0; v < n; v++) {
+		uf.insert(v);
+		G.addVertex(v);
+	}
+
+	int k = n + ((n % 2) - 2);
+
+	int contador = 0;
+
+	// WARNING: sera que existe a chance desse while rodar pra sempre?
+	// for (int i = 0; i < Kn && G.density() < density; i++) {
+	// while (|Cc| > 1) { ... } // For large values of n its very likely
+	while (G.density() < density) {
+
+		Vertex u = Random(0, n - 1);
+		Vertex v = Random(0, n - 1);
+
+		if (u != v && !G.hasEdge({v, u}) && D[u] < k && D[v] < k) {
+			uf.join(u, v);
+			G.addEdge({u, v});
+			D[u]++, D[v]++;
+		}
+
+		else {
+			// std::cout << "colisaoooooo!" << std::endl;
+			if (contador++ == 100'000'000) {
+				std::cout << "contador: " << contador << std::endl;
+			}
+		}
+	}
+
+	std::cout << "contador: " << contador << std::endl;
+	std::cout << "O(3n²): " << (3*n*n) << std::endl;
+
+	// TODO:
+	if (uf.numberOfSets() > 1) {
+
+		std::cout << "Nao e um grafo conexo" << std::endl;
+
+		// for (Vertex v : uf.heads()) {
+		//
+		// }
+	}
+
+	LinearList<Vertex> oddDegree(n);
+
+	for (Vertex v : G.vertices()) {
+		if (D[v] % 2 == 1) oddDegree += v;
+	}
+
+	for (int i = 0; i < oddDegree.size(); i += 2) {
+
+		Vertex u = oddDegree[i], v = oddDegree[i + 1];
+
+		if (!G.hasEdge({u, v})) {
+			G.addEdge({u, v});
+			D[u]++, D[v]++;
+		}
+
+		else if (D[u] == 1 || D[v] == 1) {
+
+			Vertex w;
+
+			for (Vertex x : G.vertices()) {
+				if (D[x] % 2 == 0 && D[x] < k - 1) {
+					w = x;
+					break;
+				}
+			}
+
+			G.addEdge({u, w});
+			G.addEdge({w, v});
+
+			D[u]++, D[v]++, D[w] += 2;
+		}
+
+		else {
+			G.removeEdge({u, v});
+			D[u]--, D[v]--;
+		}
+	}
+
+	bool aux = false;
+
+	for (Vertex v : G.vertices()) {
+		if (D[v] % 2 == 1) {
+			aux = true;
+			std::cout << std::format("D[{}]: {}", v, D[v]) << std::endl;
+		}
+	}
+
+	if (!aux) {
+		std::cout << "E euleriano!!!" << std::endl;
+	}
+
+	else std::cout << "Nao e euleriano :(" << std::endl;
+
+
+    Color red = {255, 0, 0};
+    Color green = {0, 255, 0};
+
+	printColoredMessage(green, red, 0.0, 10, timer.result(), std::format("{}s", timer.result()));
+
+	return G;
+}
