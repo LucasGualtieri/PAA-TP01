@@ -1,9 +1,11 @@
 #include <iostream>
 
 #include "../DataStructures/include/graph/Graph.hpp"
+#include "../DataStructures/utils/timer.hpp"
 #include "../DataStructures/include/graph/GraphBuilder.hpp"
 
 #include "../include/fleury_tarjan.hpp"
+#include "../include/RandomEulerian.hpp"
 
 using namespace std;
 
@@ -13,23 +15,21 @@ int main() {
 		.dataStructure(Graph::FastAdjacencyList)
 	.build();
 
-	int n = 3;
+	int n = 10'000;
 
-	for (Vertex v = 0; v < n; v++) {
-		G.addVertex(v);
-	}
+	G = GenerateRandomEulerian(n, .005);
 
-	// Generating a regular eulerian degree n - 1 complete graph
-	for (Vertex u = 0; u < n; u++) {
-		for (Vertex v = u + 1; v < n; v++) {
-			G.addEdge({u, v});
-		}
-	}
+	Timer timer;
 
+	timer.start();
 	LinearList<Vertex> eulerianCycle = FleuryTarjan(G);
+	timer.stop();
 
-	cout << eulerianCycle << endl;
+	cout << timer << endl;
+
+	// cout << eulerianCycle << endl;
+
+	cout << "FIM DO ALGORIMTO" << endl;
 
 	return 0;
 }
-

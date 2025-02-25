@@ -1,11 +1,13 @@
 #include <iostream>
 
+#include "../DataStructures/utils/timer.hpp"
 #include "../DataStructures/include/graph/Graph.hpp"
 #include "../DataStructures/include/graph/GraphBuilder.hpp"
-#include "../DataStructures/utils/timer.hpp"
+
+#include "../include/RandomEulerian.hpp"
 
 #include "../include/fleury_naive.hpp"
-#include "../include/RandomEulerian.hpp"
+#include "../include/fleury_tarjan.hpp"
 
 using namespace std;
 
@@ -15,21 +17,27 @@ int main() {
 		.dataStructure(Graph::FastAdjacencyList)
 	.build();
 
-	int n = 10'000;
+	int n = 1'000;
 
-	G = GenerateRandomEulerian(n, .005);
+	G = GenerateRandomEulerian(n, .90);
+
+	LinearList<Vertex> eulerianCycle;
 
 	Timer timer;
+
 	timer.start();
-	LinearList<Vertex> eulerianCycle = FleuryNaive(G);
+	eulerianCycle = FleuryTarjan(G);
 	timer.stop();
 
-	cout << timer << endl;
+	cout << endl << timer << endl;
 
-	// cout << eulerianCycle << endl;
+	timer.start();
+	eulerianCycle = FleuryNaive(G);
+	timer.stop();
+
+	cout << endl << timer << endl;
 
 	cout << "FIM DO ALGORIMTO" << endl;
 
 	return 0;
 }
-

@@ -3,6 +3,10 @@
 
 using namespace std;
 
+// #include "../include/fleury_naive.hpp"
+// #include "../include/fleury_tarjan.hpp"
+// #include "../include/utils.hpp"
+
 // TODO: Jogar isso pro arquivo de utils
 void clearscreen() {
     #ifdef _WIN32
@@ -24,13 +28,11 @@ int main() {
 
 			for (int i = 0; i < 15; i++) {
 
-				cout << "teste" << endl;
-
 				// Graph G = GenerateRandomEulerianGraph(N, density);
 
-				// Fleury(G, DFS, naiveLog);
+				// FleuryNaive(G, naiveLog);
 
-				// Fleury(G, Tarjan, tarjanLog);
+				// FleuryTarjan(G, tarjanLog);
 			}
 		}
 	}
