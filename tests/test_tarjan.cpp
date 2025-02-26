@@ -29,7 +29,7 @@ int main() {
 
 	// cout << eulerianCycle << endl;
 
-	cout << "FIM DO ALGORIMTO" << endl;
+	cout << "FIM DO ALGORITMO" << endl;
 
 	return 0;
 }

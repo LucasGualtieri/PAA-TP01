@@ -5,16 +5,7 @@ using namespace std;
 
 // #include "../include/fleury_naive.hpp"
 // #include "../include/fleury_tarjan.hpp"
-// #include "../include/utils.hpp"
-
-// TODO: Jogar isso pro arquivo de utils
-void clearscreen() {
-    #ifdef _WIN32
-		std::system("cls");
-    #else
-        std::system("clear");
-    #endif
-}
+#include "../include/utils.hpp"
 
 int main() {
 

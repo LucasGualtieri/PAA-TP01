@@ -1,14 +1,14 @@
 #ifndef MATRIX_HPP
 #define MATRIX_HPP
 
-#include <vector>
+#include <stdexcept>
 #include <sstream>
 #include <iomanip>
 
 template <typename T>
 class Matrix {
 
-	std::vector<std::vector<T>> matrix;
+	T** matrix;
 
     public:
 
@@ -16,22 +16,72 @@ class Matrix {
 
 	Matrix(int height, int width) : height(height), width(width) {
 
-		matrix.reserve(height); // Optionally reserve memory for efficiency
+		matrix = (T**)malloc(height * sizeof(T*));
+
+		if (matrix == NULL) {
+			throw std::runtime_error("Memory allocation failed!");
+		}
 
 		for (int i = 0; i < height; i++) {
-			std::vector<T> row(width);
-			matrix.push_back(row);
+
+			matrix[i] = (T*)malloc(width * sizeof(T));
+
+			if (matrix[i] == NULL) {
+				throw std::runtime_error("Memory allocation failed!");
+			}
 		}
 	}
 
-	Matrix(std::initializer_list<std::initializer_list<T>> list) : height(list.size()), width(list.begin()->size()) {
+	Matrix(const bool& aux, const int& height, const int& width) : height(height), width(width) {
 
-		matrix.reserve(height); // Optionally reserve memory for efficiency
+		matrix = (T**)malloc(height * sizeof(T*));
 
-		for (auto row : list) {
-			matrix.push_back(row);
+		if (matrix == NULL) {
+			throw std::runtime_error("Memory allocation failed!");
+		}
+
+		if (!aux) {
+
+			for (int i = 0; i < height; i++) {
+
+				matrix[i] = (T*)malloc(width * sizeof(T));
+
+				if (matrix[i] == NULL) {
+					throw std::runtime_error("Memory allocation failed!");
+				}
+			}
+		}
+
+		else {
+
+			for (int i = 0; i < height; i++) {
+
+				matrix[i] = (T*)calloc(width, sizeof(T));
+
+				if (matrix[i] == NULL) {
+					throw std::runtime_error("Memory allocation failed!");
+				}
+			}
 		}
 	}
+
+	~Matrix() {
+
+		for (int i = 0; i < height; i++) {
+			free(matrix[i]);
+		}
+
+		free(matrix);
+	}
+
+	// Matrix(std::initializer_list<std::initializer_list<T>> list) : height(list.size()), width(list.begin()->size()) {
+	//
+	// 	matrix.reserve(height); // Optionally reserve memory for efficiency
+	//
+	// 	for (auto row : list) {
+	// 		matrix.push_back(row);
+	// 	}
+	// }
 
 	bool inBounds(int i, int j) const {
 		return 0 <= i && i < height && 0 <= j && j < width;
@@ -41,7 +91,7 @@ class Matrix {
 		return !inBounds(i, j);
 	}
 
-    std::vector<T>& operator[](int i) {
+    T* operator[](int i) {
 
         if (i < 0 || i >= height) {
             throw std::out_of_range("Index out of range: " + std::to_string(i));
@@ -51,14 +101,14 @@ class Matrix {
     }
 
     // Const version of operator[]
-    const std::vector<T>& operator[](int i) const {
+	const T* operator[](int i) const {
 
-        if (i < 0 || i >= height) {
-            throw std::out_of_range("Index out of range: " + std::to_string(i));
-        }
+		if (i < 0 || i >= height) {
+			throw std::out_of_range("Index out of range: " + std::to_string(i));
+		}
 
-        return matrix[i];
-    }
+		return matrix[i];
+	}
 
 	std::string str() const {
 

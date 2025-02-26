@@ -19,7 +19,9 @@ int main() {
 
 	int n = 1'000;
 
-	G = GenerateRandomEulerian(n, .90);
+	G = GenerateRandomEulerian(n, .1);
+
+	cout << "G.density(): " << G.density() << endl;
 
 	LinearList<Vertex> eulerianCycle;
 
@@ -37,7 +39,7 @@ int main() {
 
 	cout << endl << timer << endl;
 
-	cout << "FIM DO ALGORIMTO" << endl;
+	cout << "FIM DO ALGORITMO" << endl;
 
 	return 0;
 }

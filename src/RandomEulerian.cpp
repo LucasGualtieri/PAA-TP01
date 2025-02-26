@@ -8,15 +8,7 @@
 
 #include "../include/RandomEulerian.hpp"
 #include "../include/colorMessages.hpp"
-
-Vertex Random(const int& inferiorLimit, const int& superiorLimit) {
-
-	std::random_device rd;  // Obtain a random seed from hardware
-	std::mt19937 gen(rd()); // Initialize Mersenne Twister PRNG
-	std::uniform_int_distribution<int> dist(0, superiorLimit); // Inclusive Range [a, b]
-
-	return dist(gen);
-}
+#include "../include/progressBar.hpp"
 
 // TODO: Implementar com o esquema arvore geradora + rejection sampling
 Graph GenerateRandomEulerian(size_t n, float density) {
@@ -52,31 +44,43 @@ Graph GenerateRandomEulerian(size_t n, float density) {
 	int k = n + ((n % 2) - 2);
 
 	int contador = 0;
+	int m = ((n * n - n) / 2.0) * density;
 
 	// WARNING: sera que existe a chance desse while rodar pra sempre?
 	// for (int i = 0; i < Kn && G.density() < density; i++) {
 	// while (|Cc| > 1) { ... } // For large values of n its very likely
-	while (G.density() < density) {
+	while (contador < m) {
 
 		Vertex u = Random(0, n - 1);
 		Vertex v = Random(0, n - 1);
 
 		if (u != v && !G.hasEdge({v, u}) && D[u] < k && D[v] < k) {
+
 			uf.join(u, v);
 			G.addEdge({u, v});
 			D[u]++, D[v]++;
+
+			if (contador % (m / 100) == 0) {
+				progressBar(contador, 0, m);
+			}
+
+			contador++;
 		}
 
 		else {
 			// std::cout << "colisaoooooo!" << std::endl;
-			if (contador++ == 100'000'000) {
-				std::cout << "contador: " << contador << std::endl;
-			}
+			// if (contador++ == 100'000'000) {
+			// 	std::cout << "contador: " << contador << std::endl;
+			// }
 		}
 	}
 
-	std::cout << "contador: " << contador << std::endl;
-	std::cout << "O(3n²): " << (3*n*n) << std::endl;
+	// std::cout << std::fixed << std::setprecision(4);  // Set to 4 decimal places
+	// std::cout << "\nG.n: " << G.n << std::endl;
+	// std::cout << "G.m: " << G.m << std::endl;
+	// std::cout << "contador: " << contador << std::endl;
+	std::cout << "G.density(): " << G.density() << std::endl;
+	// std::cout << "O(3n²): " << (3*n*n) << std::endl;
 
 	// TODO:
 	if (uf.numberOfSets() > 1) {
@@ -136,7 +140,7 @@ Graph GenerateRandomEulerian(size_t n, float density) {
 	}
 
 	if (!aux) {
-		std::cout << "E euleriano!!!" << std::endl;
+		// std::cout << "E euleriano!!!" << std::endl;
 	}
 
 	else std::cout << "Nao e euleriano :(" << std::endl;

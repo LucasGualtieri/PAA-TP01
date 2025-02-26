@@ -1,5 +1,9 @@
 #include "../include/progressBar.hpp"
 
+#include <format>
+#include <iostream>
+#include <iomanip>
+
 //FIX: Only goes up to 98% and doesn't break the line at the end
 void progressBar(int i, int li, int ls) {
 
@@ -27,7 +31,7 @@ void progressBar(int i, int li, int ls) {
     for (int j = pos; j < barWidth; ++j) std::cout << " ";
 
     // Print the percentage
-    std::cout << "] " << std::fixed << std::setprecision(0) << (progress * 100) << "%";
+    std::cout << "] " << std::format("{:.0f}", progress * 100) << "%";
     std::cout.flush();
 
 	if (i == ls - 1) std::cout << std::endl;

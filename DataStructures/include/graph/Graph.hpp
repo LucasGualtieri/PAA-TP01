@@ -29,7 +29,6 @@ namespace std {
 	};
 }
 
-// TODO: Incluir m para keep count do numero de arestas em O(1)
 class Graph {
 
 public:
@@ -185,6 +184,8 @@ public:
 
 	void addEdge(const Vertex& u, const Vertex& v, const float& weight) {
 
+		if (hasEdge({u, v})) return;
+
 		if (!weighted) {
 			throw std::runtime_error("You should not pass the weight of the edge");
 		}
@@ -202,6 +203,8 @@ public:
 
 	void addEdge(const Vertex& u, const Vertex& v) {
 
+		if (hasEdge({u, v})) return;
+
 		if (weighted) {
 			throw std::runtime_error("You must pass the weight of the edge");
 		}
@@ -218,13 +221,14 @@ public:
 	}
 
 	void addEdge(const Vertex& u, const Vertex& v, const Pair<std::string, std::string>& props) {
+		if (hasEdge({u, v})) return;
 		addEdge(u, v);
 		edgeMap.insert({{u, v}, props});
-		m++;
 	}
 
-	//TODO: TEM QUE VERIFICAR A EXISTENCIA DE ARESTA BOBO!
 	void addEdge(const Edge& e) {
+
+		if (hasEdge(e)) return;
 
 		if (!dataStructure->hasVertex(e.u)) addVertex(e.u);
 
@@ -248,10 +252,9 @@ public:
 	}
 
 	void addEdge(const Edge& e, const Pair<std::string, std::string>& props) {
+		if (hasEdge(e)) return;
 		addEdge(e);
 		edgeMap.insert({{e.u, e.v}, props});
-
-		m++;
 	}
 
 	void removeEdge(const Edge& e) {
@@ -414,14 +417,14 @@ public:
 		return os;
 	}
 
-	float density(const int& precision = 3) const {
+	double density(const int& precision = 3) const {
 
-		float m = this->m;
-		float n = this->n;
+		double n = this->n;
+		double m = this->m;
 
-		float density = m / ((n * n - n) / (directed ? 1 : 2));
+		double density = m / ((n * n - n) / (directed ? 1 : 2));
 
-		float factor = std::pow(10, precision);
+		double factor = std::pow(10, precision);
 		return std::round(density * factor) / factor;
 	}
 

@@ -4,6 +4,7 @@
 // #include "../include/progressBar.hpp"
 #include "../DataStructures/include/matrix/matrix.hpp"
 #include "../include/progressBar.hpp"
+#include "../include/utils.hpp"
 
 struct EdgeHash {
 
@@ -49,56 +50,18 @@ void Tarjan(Matrix<bool>& bridges, const Graph& G) {
 	LinearList<int> low(G.n, -1);
 	LinearList<Vertex> parent(G.n, -1);
 
-	for (int i = 0; i < G.n; i++) {
-		for (int j = 0; j < G.n; j++) {
-			bridges[i][j] = false;
-		}
-	}
-
 	// Vertex x = Random(0, G.n - 1);
 	Vertex x = 0;
 
-	for (Vertex v : G.vertices()) {
-		if (disc[v] == -1) {
-			DFS(v, disc, low, parent, bridges, G);
-		}
-	}
+	DFS(x, disc, low, parent, bridges, G);
+
 }
 
 LinearList<Vertex> FleuryTarjan(const Graph& G) {
 
-	bool** visitedEdges = (bool**)calloc(G.n, sizeof(bool*));
+	Matrix<bool> visitedEdges(true, G.n, G.n);
 
-	{
-		std::cout << "Density: " << G.density(8) << std::endl;
-
-		std::cout << "Allocatin matrix" << std::endl;
-
-		if (visitedEdges == NULL) {
-			perror("Memory allocation failed");
-			return 1;
-		}
-
-		for (int i = 0; i < G.n; i++) {
-
-			visitedEdges[i] = (bool*)calloc(G.n, sizeof(bool));
-
-			if (visitedEdges[i] == NULL) {
-				perror("Memory allocation failed");
-				return 1;
-			}
-
-			// if ((i % (G.n / 100)) == 0) {
-			// 	progressBar(i, 0, G.n);
-			// }
-		}
-
-		std::cout << "setting matrix" << std::endl;
-
-		std::cout << "starting fleury tarjan" << std::endl;
-	}
-
-	Matrix<bool> bridges(G.n, G.n);
+	Matrix<bool> bridges(true, G.n, G.n);
 	Tarjan(bridges, G);
 
 	LinearList<Vertex> eulerianCycle(G.m + 1);
@@ -108,9 +71,7 @@ LinearList<Vertex> FleuryTarjan(const Graph& G) {
 		D[v] = G.degree(v);
 	}
 
-	// TODO: Jogar a funcao Random pro utils
-	// Vertex x = Random(0, G.n - 1);
-	Vertex u = 0;
+	Vertex u = Random(0, G.n - 1);
 	eulerianCycle += u;
 
 	for (int i = 0; i < G.m; i++) {
@@ -119,7 +80,7 @@ LinearList<Vertex> FleuryTarjan(const Graph& G) {
 			progressBar(i, 0, G.m);
 		}
 
-		for (Vertex v : G.neighbors(u)) {
+		for (auto& [v, w] : G.edgesOf(u)) {
 
 			if (!visitedEdges[u][v]) {
 
@@ -136,13 +97,6 @@ LinearList<Vertex> FleuryTarjan(const Graph& G) {
 			}
 		}
 	}
-
-    // Free the allocated memory
-    for (int i = 0; i < G.n; i++) {
-        free(visitedEdges[i]);
-    }
-
-    free(visitedEdges);
 
 	return eulerianCycle;
 }

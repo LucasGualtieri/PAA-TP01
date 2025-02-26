@@ -2,7 +2,7 @@ CC = g++
 
 CFLAGS = -std=c++20 -O0
 
-SRC = include/RandomEulerian.hpp src/RandomEulerian.cpp include/progressBar.hpp src/progressBar.cpp
+SRC = include/RandomEulerian.hpp src/RandomEulerian.cpp include/progressBar.hpp src/progressBar.cpp include/utils.hpp src/utils.cpp
 
 OBJ = $(SRC:.cpp=.o)
 
@@ -14,11 +14,9 @@ TEST = bin/test
 # Cria a pasta bin se ela não existir
 $(shell mkdir -p bin)
 
-all: $(OUT)
-	./$(OUT)
-
-$(OUT): $(OBJ)
-	$(CC) $(CFLAGS) -o $(OUT) $(OBJ)
+all:
+	$(CC) $(CFLAGS) -o $(TEST) $(SRC) src/main.cpp
+	./$(TEST)
 
 # tests: $(OUT)
 # 	$(CC) $(CFLAGS) -o bin/test $(TESTS)

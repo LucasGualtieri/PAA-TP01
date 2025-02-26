@@ -1,9 +1,11 @@
 #include "../include/fleury_naive.hpp"
 
 #include "../DataStructures/include/stack/linkedStack.hpp"
+#include "../DataStructures/include/matrix/matrix.hpp"
 #include "../include/progressBar.hpp"
+#include "../include/utils.hpp"
 
-bool isBridge(const Edge& e, bool** visitedEdges, const Graph& G) {
+bool isBridge(const Edge& e, const Matrix<bool>& visitedEdges, const Graph& G) {
 
 	LinkedStack<Vertex> stack;
 
@@ -38,36 +40,7 @@ bool isBridge(const Edge& e, bool** visitedEdges, const Graph& G) {
 
 LinearList<Vertex> FleuryNaive(const Graph& G) {
 
-	bool** visitedEdges = (bool**)calloc(G.n, sizeof(bool*));
-
-	{
-		std::cout << "Density: " << G.density(8) << std::endl;
-
-		std::cout << "Allocatin matrix" << std::endl;
-
-		if (visitedEdges == NULL) {
-			perror("Memory allocation failed");
-			return 1;
-		}
-
-		for (int i = 0; i < G.n; i++) {
-
-			visitedEdges[i] = (bool*)calloc(G.n, sizeof(bool));
-
-			if (visitedEdges[i] == NULL) {
-				perror("Memory allocation failed");
-				return 1;
-			}
-
-			// if ((i % (G.n / 100)) == 0) {
-			// 	progressBar(i, 0, G.n);
-			// }
-		}
-
-		std::cout << "setting matrix" << std::endl;
-
-		std::cout << "starting fleury naive" << std::endl;
-	}
+	Matrix<bool> visitedEdges(true, G.n, G.n);
 
 	LinearList<Vertex> eulerianCycle(G.m + 1);
 	LinearList<Vertex> D(G.n, 0);
@@ -76,9 +49,7 @@ LinearList<Vertex> FleuryNaive(const Graph& G) {
 		D[v] = G.degree(v);
 	}
 
-	// TODO: Jogar a funcao Random pro utils
-	// Vertex x = Random(0, G.n - 1);
-	Vertex u = 0;
+	Vertex u = Random(0, G.n - 1);
 	eulerianCycle += u;
 
 	for (int i = 0; i < G.m; i++) {
@@ -105,13 +76,6 @@ LinearList<Vertex> FleuryNaive(const Graph& G) {
 			}
 		}
 	}
-
-    // Free the allocated memory
-    for (int i = 0; i < G.n; i++) {
-        free(visitedEdges[i]);
-    }
-
-    free(visitedEdges);
 
 	return eulerianCycle;
 }
