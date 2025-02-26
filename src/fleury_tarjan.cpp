@@ -50,8 +50,7 @@ void Tarjan(Matrix<bool>& bridges, const Graph& G) {
 	LinearList<int> low(G.n, -1);
 	LinearList<Vertex> parent(G.n, -1);
 
-	// Vertex x = Random(0, G.n - 1);
-	Vertex x = 0;
+	Vertex x = Random(0, G.n - 1);
 
 	DFS(x, disc, low, parent, bridges, G);
 
