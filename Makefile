@@ -34,9 +34,9 @@ tarjanvsnaive:
 	$(CC) $(CFLAGS) -o $(TEST) $(SRC) tests/test_tarjanvsnaive.cpp src/fleury_tarjan.cpp src/fleury_naive.cpp
 	./$(TEST)
 
-# random: $(OUT)
-# 	$(CC) $(CFLAGS) -o bin/test tests/test_random_eulerian.cpp include/RandomEulerian.hpp src/RandomEulerian.cpp
-# 	./bin/test
+random:
+	$(CC) $(CFLAGS) -o $(TEST) $(SRC) tests/test_random_eulerian.cpp
+	./$(TEST)
 
 # bar: $(OUT)
 # 	$(CC) $(CFLAGS) -o bin/test tests/test_progressBar.cpp include/progressBar.hpp src/progressBar.cpp

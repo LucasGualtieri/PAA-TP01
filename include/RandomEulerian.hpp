@@ -6,5 +6,6 @@
 #include "../DataStructures/include/graph/Graph.hpp"
 
 Graph GenerateRandomEulerian(size_t n, float density);
+Graph FastGenerateRandomEulerian(size_t n, float density);
 
 #endif

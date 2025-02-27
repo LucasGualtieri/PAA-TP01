@@ -14,7 +14,7 @@ bool isBridge(const Edge& e, const Matrix<bool>& visitedEdges, const Graph& G) {
 	visited[e.u] = true;
 
 	for (Vertex v : G.neighbors(e.u)) {
-		if (v != e.v) {
+		if (v != e.v && !visitedEdges[e.u][v]) {
 			stack.push(v);
 			visited[v] = true;
 		}
@@ -50,24 +50,32 @@ LinearList<Vertex> FleuryNaive(const Graph& G) {
 	}
 
 	Vertex u = Random(0, G.n - 1);
+
+	for (Vertex v : G.vertices()) {
+		if (G.degree(v) % 2 == 1) {
+			u = v;
+			break;
+		} 
+	}
+
 	eulerianCycle += u;
 
 	for (int i = 0; i < G.m; i++) {
 
-		if (i % (G.m / 100) == 0) {
-			progressBar(i, 0, G.m);
-		}
+		// if (i % (G.m / 100) == 0) {
+		// 	progressBar(i, 0, G.m);
+		// }
 
 		for (Vertex v : G.neighbors(u)) {
 
 			if (!visitedEdges[u][v]) {
 
-				if (!isBridge({u, v}, visitedEdges, G) || D[u] == 1) {
+				if (D[u] == 1 || !isBridge({u, v}, visitedEdges, G)) {
 
 					visitedEdges[u][v] = true;
 					visitedEdges[v][u] = true;
-
 					D[u]--, D[v]--;
+
 					eulerianCycle += v;
 					u = v;
 

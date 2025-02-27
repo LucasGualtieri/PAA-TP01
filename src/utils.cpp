@@ -11,9 +11,9 @@ void clearscreen() {
 
 int Random(const int& inferiorLimit, const int& superiorLimit) {
 
-	std::random_device rd;  // Obtain a random seed from hardware
-	std::mt19937 gen(rd()); // Initialize Mersenne Twister PRNG
-	std::uniform_int_distribution<int> dist(0, superiorLimit); // Inclusive Range [a, b]
+	static std::random_device rd;  // Obtain a random seed from hardware
+	static std::mt19937 gen(rd()); // Initialize Mersenne Twister PRNG
+	static std::uniform_int_distribution<int> dist(0, superiorLimit); // Inclusive Range [a, b]
 
 	return dist(gen);
 }
